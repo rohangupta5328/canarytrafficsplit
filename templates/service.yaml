@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.name}}-primary
+  labels:
+     app: {{.Values.name}}
+spec:
+  type: {{.Values.serviceType}}
+  ports:
+  - port: {{.Values.servicePort}}
+    targetPort: http
+    protocol: TCP
+  selector:
+    app: {{.Values.name}}
+    harness.io/track: stable
+
+#canary service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.name}}-stage
+  labels:
+     app: {{.Values.name}}
+spec:
+  type: {{.Values.serviceType}}
+  ports:
+  - port: {{.Values.servicePort}}
+    targetPort: http
+    protocol: TCP
+  selector:
+    app: {{.Values.name}}
+    harness.io/track: canary

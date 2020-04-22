@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+
+  template:
+    metadata:
+      labels:
+        app: my-app
+
+      
+    spec:
+      containers:
+      - name: my-app
+        image: {{.Values.image}}
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: probe
+          containerPort: 8086
+        env:
+        - name: VERSION
+          value: 
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['harness.io/color']
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: probe
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: probe
+          periodSeconds: 5
